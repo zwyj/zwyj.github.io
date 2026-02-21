@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Workspace</title>
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  body {
+    background: #0f0f0f;
+    color: #eaeaea;
+    font-family: 'Segoe UI', monospace;
+    min-height: 100vh;
+    padding: 2rem;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+  header {
+    margin-bottom: 2rem;
+  }
+  h1 {
+    font-size: 22px;
+    color: #00e072;
+    margin-bottom: 0.5rem;
+  }
+  .desc {
+    color: #888;
+    font-size: 14px;
+  }
+  .panel {
+    background: #141414;
+    border-radius: 8px;
+    padding: 1.2rem;
+    margin-bottom: 1rem;
+    border: 1px solid #222;
+  }
+  .panel h3 {
+    color: #ccc;
+    font-size: 16px;
+    margin-bottom: 0.8rem;
+  }
+  .btn {
+    display: inline-block;
+    padding: 8px 14px;
+    background: #1a1a1a;
+    color: #00e072;
+    border: 1px solid #333;
+    border-radius: 6px;
+    margin-right: 8px;
+    margin-bottom: 8px;
+    cursor: pointer;
+    text-decoration: none;
+  }
+  .btn:hover {
+    background: #1f1f1f;
+    border-color: #00e072;
+  }
+  input {
+    width: 100%;
+    padding: 10px;
+    background: #1a1a1a;
+    border: 1px solid #333;
+    color: #fff;
+    border-radius: 6px;
+    outline: none;
+    margin-bottom: 0.5rem;
+  }
+  .tools {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+</style>
+</head>
+
+<body>
+<header>
+  <h1>Personal Workspace</h1>
+  <p class="desc">极简实用工具页</p>
+</header>
+
+<!-- 快捷搜索 -->
+<div class="panel">
+  <h3>快速搜索</h3>
+  <input type="text" id="search" placeholder="输入关键词...">
+  <div>
+    <a class="btn" onclick="search('baidu')">百度</a>
+    <a class="btn" onclick="search('github')">GitHub</a>
+    <a class="btn" onclick="search('zhihu')">知乎</a>
+    <a class="btn" onclick="search('bilibili')">B站</a>
+  </div>
+</div>
+
+<!-- 实用工具 -->
+<div class="panel">
+  <h3>实用功能</h3>
+  <div class="tools">
+    <a class="btn" onclick="clock()">显示时间</a>
+    <a class="btn" onclick="darkMode()">切换模式</a>
+    <a class="btn" onclick="toTop()">回到顶部</a>
+    <a class="btn" onclick="about()">关于页面</a>
+  </div>
+</div>
+
+<!-- 链接收藏 -->
+<div class="panel">
+  <h3>常用链接</h3>
+  <a class="btn" href="https://github.com" target="_blank">GitHub</a>
+  <a class="btn" href="https://www.bilibili.com" target="_blank">Bilibili</a>
+  <a class="btn" href="https://mail.qq.com" target="_blank">QQ邮箱</a>
+</div>
+
+<script>
+  // 搜索
+  function search(engine) {
+    const val = document.getElementById('search').value.trim();
+    if (!val) return alert('请输入内容');
+    const urls = {
+      baidu: 'https://www.baidu.com/s?wd=',
+      github: 'https://github.com/search?q=',
+      zhihu: 'https://www.zhihu.com/search?q=',
+      bilibili: 'https://search.bilib.com/all?keyword='
+    };
+    window.open(urls[engine] + encodeURIComponent(val));
+  }
+
+  // 显示时间
+  function clock() {
+    alert(new Date().toLocaleString());
+  }
+
+  // 回到顶部
+  function toTop() {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  // 极简模式
+  function darkMode() {
+    document.body.style.background = 
+      document.body.style.background === '#000' ? '#0f0f0f' : '#000';
+  }
+
+  // 关于
+  function about() {
+    alert('极简实用个人主页 | 纯代码制作');
+  }
+</script>
+</body>
+</html>
