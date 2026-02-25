@@ -16,6 +16,7 @@
       color: white;
       min-height: 100vh;
       padding: 20px;
+      position: relative;
     }
     .container {
       max-width: 800px;
@@ -51,15 +52,11 @@
       border-radius: 12px;
       cursor: pointer;
       transition: transform 0.2s, background 0.2s;
+      user-select: none;
     }
     .link-item:hover {
       background: rgba(255, 255, 255, 0.3);
       transform: translateY(-3px);
-    }
-    .link-item img {
-      width: 40px;
-      height: 40px;
-      margin-bottom: 8px;
     }
     .add-btn {
       margin-top: 20px;
@@ -73,6 +70,25 @@
     .add-btn:hover {
       background: rgba(255,255,255,0.3);
     }
+
+    /* Toast 提示 */
+    #toast {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0,0,0,0.7);
+      color: white;
+      padding: 10px 20px;
+      border-radius: 8px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s;
+    }
+    #toast.show {
+      opacity: 1;
+    }
+
     @media (max-width: 600px) {
       h1 { font-size: 1.8rem; }
       .links { grid-template-columns: repeat(3, 1fr); }
@@ -89,19 +105,44 @@
     <button class="add-btn" onclick="addCustomLink()">+ 添加网站</button>
   </div>
 
+  <!-- Toast 提示 -->
+  <div id="toast">已复制到剪贴板</div>
+
   <script>
-    // 默认网站列表
+    // 默认网站列表（新增：夸克、Steam++、电话、邮箱）
     const defaultLinks = [
       { name: "百度", url: "https://www.baidu.com", icon: "🔍" },
       { name: "知乎", url: "https://www.zhihu.com", icon: "🤔" },
       { name: "GitHub", url: "https://github.com", icon: "💻" },
       { name: "Bilibili", url: "https://www.bilibili.com", icon: "📺" },
       { name: "淘宝", url: "https://www.taobao.com", icon: "🛒" },
-      { name: "微博", url: "https://weibo.com", icon: "🐦" }
+      { name: "微博", url: "https://weibo.com", icon: "🐦" },
+      { name: "夸克", url: "https://quark.cn", icon: "✨" },
+      { name: "Steam++", url: "https://steampp.net/", icon: "🎮" },
+      { 
+        name: "电话", 
+        icon: "📞",
+        isCopy: true,
+        copyText: "15314813086"
+      },
+      { 
+        name: "邮箱", 
+        icon: "📧",
+        isCopy: true,
+        copyText: "1161368376@qq.com"
+      }
     ];
 
     // 获取保存的链接（优先使用 localStorage）
     let links = JSON.parse(localStorage.getItem('myLinks')) || defaultLinks;
+
+    // 显示 Toast
+    function showToast(message = "已复制到剪贴板") {
+      const toast = document.getElementById("toast");
+      toast.textContent = message;
+      toast.classList.add("show");
+      setTimeout(() => toast.classList.remove("show"), 2000);
+    }
 
     function renderLinks() {
       const container = document.getElementById('linksContainer');
@@ -110,7 +151,30 @@
         const div = document.createElement('div');
         div.className = 'link-item';
         div.innerHTML = `<div>${link.icon}</div><div>${link.name}</div>`;
-        div.onclick = () => window.open(link.url, '_blank');
+        
+        if (link.isCopy) {
+          // 点击复制文本（电话/邮箱）
+          div.onclick = async () => {
+            try {
+              await navigator.clipboard.writeText(link.copyText);
+              showToast(`已复制：${link.copyText}`);
+            } catch (err) {
+              // 兼容旧浏览器
+              const textarea = document.createElement('textarea');
+              textarea.value = link.copyText;
+              textarea.style.position = 'fixed';
+              textarea.style.opacity = '0';
+              document.body.appendChild(textarea);
+              textarea.select();
+              document.execCommand('copy');
+              document.body.removeChild(textarea);
+              showToast(`已复制（兼容模式）`);
+            }
+          };
+        } else {
+          // 普通链接跳转
+          div.onclick = () => window.open(link.url, '_blank');
+        }
         container.appendChild(div);
       });
     }
@@ -137,9 +201,9 @@
     // 添加自定义链接
     function addCustomLink() {
       const name = prompt("请输入网站名称：");
-      if (!name) return;
-      const url = prompt("请输入网址（如 https://example.com）：");
-      if (!url) return;
+      if (!name) return;如果 (!name名称) 返回;
+      const常量 url网址 = prompt提示("请输入网址（如 https://example.com）："“请输入网址（如 https://example.com）：”);const常量 url网址 = prompt提示(“请输入网址（如 https://example.com）：”);
+      if (!url) return;如果 (!url) 返回;如果 (!url网址网址) 返回;如果 (!url网址网址) 返回;
       const icon = prompt("请输入一个表情符号作为图标（如 🌐）：", "🌐");
       links.push({ name, url, icon });
       localStorage.setItem('myLinks', JSON.stringify(links));
@@ -148,6 +212,6 @@
 
     // 初始化
     renderLinks();
-  </script>
+  </script></脚本></脚本></脚本>
 </body>
 </html>
