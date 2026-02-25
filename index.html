@@ -105,11 +105,10 @@
     <button class="add-btn" onclick="addCustomLink()">+ 添加网站</button>
   </div>
 
-  <!-- Toast 提示 -->
   <div id="toast">已复制到剪贴板</div>
 
   <script>
-    // 默认网站列表（新增：夸克、Steam++、电话、邮箱）
+    // 默认网站列表
     const defaultLinks = [
       { name: "百度", url: "https://www.baidu.com", icon: "🔍" },
       { name: "知乎", url: "https://www.zhihu.com", icon: "🤔" },
@@ -133,10 +132,10 @@
       }
     ];
 
-    // 获取保存的链接（优先使用 localStorage）
+    // 获取链接（优先使用 localStorage）
     let links = JSON.parse(localStorage.getItem('myLinks')) || defaultLinks;
 
-    // 显示 Toast
+    // 显示提示
     function showToast(message = "已复制到剪贴板") {
       const toast = document.getElementById("toast");
       toast.textContent = message;
@@ -144,8 +143,10 @@
       setTimeout(() => toast.classList.remove("show"), 2000);
     }
 
+    // 渲染链接
     function renderLinks() {
       const container = document.getElementById('linksContainer');
+      if (!container) return;
       container.innerHTML = '';
       links.forEach(link => {
         const div = document.createElement('div');
@@ -153,13 +154,11 @@
         div.innerHTML = `<div>${link.icon}</div><div>${link.name}</div>`;
         
         if (link.isCopy) {
-          // 点击复制文本（电话/邮箱）
           div.onclick = async () => {
             try {
               await navigator.clipboard.writeText(link.copyText);
               showToast(`已复制：${link.copyText}`);
             } catch (err) {
-              // 兼容旧浏览器
               const textarea = document.createElement('textarea');
               textarea.value = link.copyText;
               textarea.style.position = 'fixed';
@@ -168,42 +167,44 @@
               textarea.select();
               document.execCommand('copy');
               document.body.removeChild(textarea);
-              showToast(`已复制（兼容模式）`);
+              showToast("已复制（兼容模式）");
             }
           };
         } else {
-          // 普通链接跳转
           div.onclick = () => window.open(link.url, '_blank');
         }
         container.appendChild(div);
       });
     }
 
-    // 搜索跳转
-    document.getElementById('searchInput').addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') {
-        const query = e.target.value.trim();
-        if (query) {
-          let url = query;
-          if (!/^https?:\/\//.test(query)) {
-            if (query.includes('.')) {
-              url = 'https://' + query;
-            } else {
-              url = 'https://www.baidu.com/s?wd=' + encodeURIComponent(query);
+    // 搜索功能（安全获取元素）
+    const searchInput = document.getElementById('searchInput');
+    if (searchInput) {
+      searchInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+          const query = e.target.value.trim();
+          if (query) {
+            let url = query;
+            if (!/^https?:\/\//.test(query)) {
+              if (query.includes('.')) {
+                url = 'https://' + query;
+              } else {
+                url = 'https://www.baidu.com/s?wd=' + encodeURIComponent(query);
+              }
             }
+            window.open(url, '_blank');
+            e.target.value = '';
           }
-          window.open(url, '_blank');
-          e.target.value = '';
         }
-      }
-    });
+      });
+    }
 
     // 添加自定义链接
     function addCustomLink() {
       const name = prompt("请输入网站名称：");
-      if (!name) return;如果 (!name名称) 返回;
-      const常量 url网址 = prompt提示("请输入网址（如 https://example.com）："“请输入网址（如 https://example.com）：”);const常量 url网址 = prompt提示(“请输入网址（如 https://example.com）：”);
-      if (!url) return;如果 (!url) 返回;如果 (!url网址网址) 返回;如果 (!url网址网址) 返回;
+      if (!name) return;
+      const url = prompt("请输入网址（如 https://example.com）：");
+      if (!url) return;
       const icon = prompt("请输入一个表情符号作为图标（如 🌐）：", "🌐");
       links.push({ name, url, icon });
       localStorage.setItem('myLinks', JSON.stringify(links));
@@ -212,6 +213,6 @@
 
     // 初始化
     renderLinks();
-  </script></脚本></脚本></脚本>
+  </script>
 </body>
 </html>
