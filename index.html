@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>我的导航</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: "Segoe UI", "Microsoft YaHei", sans-serif;
+    }
+    body {
+      background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+      color: white;
+      min-height: 100vh;
+      padding: 20px;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      text-align: center;
+    }
+    h1 {
+      margin: 20px 0;
+      font-size: 2.2rem;
+    }
+    .search-box {
+      margin: 20px 0;
+    }
+    .search-box input {
+      width: 90%;
+      padding: 12px 20px;
+      font-size: 1rem;
+      border: none;
+      border-radius: 30px;
+      outline: none;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    }
+    .links {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+      gap: 15px;
+      margin-top: 20px;
+    }
+    .link-item {
+      background: rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(10px);
+      padding: 15px 10px;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: transform 0.2s, background 0.2s;
+    }
+    .link-item:hover {
+      background: rgba(255, 255, 255, 0.3);
+      transform: translateY(-3px);
+    }
+    .link-item img {
+      width: 40px;
+      height: 40px;
+      margin-bottom: 8px;
+    }
+    .add-btn {
+      margin-top: 20px;
+      padding: 10px 20px;
+      background: rgba(255,255,255,0.2);
+      border: none;
+      color: white;
+      border-radius: 20px;
+      cursor: pointer;
+    }
+    .add-btn:hover {
+      background: rgba(255,255,255,0.3);
+    }
+    @media (max-width: 600px) {
+      h1 { font-size: 1.8rem; }
+      .links { grid-template-columns: repeat(3, 1fr); }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🚀 我的导航</h1>
+    <div class="search-box">
+      <input type="text" id="searchInput" placeholder="输入网址或关键词（如：baidu）" />
+    </div>
+    <div class="links" id="linksContainer"></div>
+    <button class="add-btn" onclick="addCustomLink()">+ 添加网站</button>
+  </div>
+
+  <script>
+    // 默认网站列表
+    const defaultLinks = [
+      { name: "百度", url: "https://www.baidu.com", icon: "🔍" },
+      { name: "知乎", url: "https://www.zhihu.com", icon: "🤔" },
+      { name: "GitHub", url: "https://github.com", icon: "💻" },
+      { name: "Bilibili", url: "https://www.bilibili.com", icon: "📺" },
+      { name: "淘宝", url: "https://www.taobao.com", icon: "🛒" },
+      { name: "微博", url: "https://weibo.com", icon: "🐦" }
+    ];
+
+    // 获取保存的链接（优先使用 localStorage）
+    let links = JSON.parse(localStorage.getItem('myLinks')) || defaultLinks;
+
+    function renderLinks() {
+      const container = document.getElementById('linksContainer');
+      container.innerHTML = '';
+      links.forEach(link => {
+        const div = document.createElement('div');
+        div.className = 'link-item';
+        div.innerHTML = `<div>${link.icon}</div><div>${link.name}</div>`;
+        div.onclick = () => window.open(link.url, '_blank');
+        container.appendChild(div);
+      });
+    }
+
+    // 搜索跳转
+    document.getElementById('searchInput').addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        const query = e.target.value.trim();
+        if (query) {
+          let url = query;
+          if (!/^https?:\/\//.test(query)) {
+            if (query.includes('.')) {
+              url = 'https://' + query;
+            } else {
+              url = 'https://www.baidu.com/s?wd=' + encodeURIComponent(query);
+            }
+          }
+          window.open(url, '_blank');
+          e.target.value = '';
+        }
+      }
+    });
+
+    // 添加自定义链接
+    function addCustomLink() {
+      const name = prompt("请输入网站名称：");
+      if (!name) return;
+      const url = prompt("请输入网址（如 https://example.com）：");
+      if (!url) return;
+      const icon = prompt("请输入一个表情符号作为图标（如 🌐）：", "🌐");
+      links.push({ name, url, icon });
+      localStorage.setItem('myLinks', JSON.stringify(links));
+      renderLinks();
+    }
+
+    // 初始化
+    renderLinks();
+  </script>
+</body>
+</html>
